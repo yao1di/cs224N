@@ -74,7 +74,7 @@ def naiveSoftmaxLossAndGradient(
 
     ## 计算梯度
     # 第 outsideWordIdx 个单词的真实概率为 1 当o == c 时为1，否则为0
-    y_true = np.zeros(probs.shape)
+    y_true = np.zeros(outsideVectors.shape[0])
     y_true[outsideWordIdx] = 1
 
     ## gradient of center word 用于对center word 的词向量本身进行迭代更新
@@ -226,9 +226,17 @@ def skipgram(currentCenterWord, windowSize, outsideWords, word2Ind,
     gradOutsideVectors = np.zeros(outsideVectors.shape)
 
     ### YOUR CODE HERE (~8 Lines)
-
-    ### END YOUR CODE
-    
+    v_c_idx = word2Ind[currentCenterWord]
+    u_w_idx = [word2Ind[u_wi] for u_wi in outsideWords]
+    #print(u_w_idx)
+    v_c = centerWordVectors[v_c_idx]
+    #u_w = outsideVectors[u_w_idx]
+    for idx in u_w_idx:
+        l,g1,g2 = word2vecLossAndGradient(v_c,idx,outsideVectors,dataset)
+        loss += l
+        gradCenterVecs[v_c_idx] += g1 # 这里要注意对给定的center word进行更新
+        gradOutsideVectors += g2
+    ### END YOUR CODE    
     return loss, gradCenterVecs, gradOutsideVectors
 
 
