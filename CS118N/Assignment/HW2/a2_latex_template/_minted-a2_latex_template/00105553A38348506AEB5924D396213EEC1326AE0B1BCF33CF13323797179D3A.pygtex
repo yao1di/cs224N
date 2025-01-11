@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{+w}{    }conda\PYG{+w}{ }env\PYG{+w}{ }create\PYG{+w}{ }\PYGZhy{}f\PYG{+w}{ }env.yml
+\PYG{+w}{    }conda\PYG{+w}{ }activate\PYG{+w}{ }a2
+\end{Verbatim}

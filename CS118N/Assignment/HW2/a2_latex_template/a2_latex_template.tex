@@ -1,0 +1,705 @@
+\documentclass{article}
+\usepackage{ctex}
+\newif\ifanswers
+\answerstrue % comment out to hide answers
+
+\usepackage[compact]{titlesec}
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage[usenames,dvipsnames]{color} % Required for custom colors
+\usepackage{graphicx} % Required to insert images
+\usepackage{listings} % Required for insertion of code
+\usepackage{courier} % Required for the courier font
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{caption}
+\usepackage{hyperref}
+\captionsetup[table]{skip=4pt}
+\usepackage{framed}
+\usepackage{bm}
+\usepackage{minted}
+\usepackage{soul}
+\usepackage{tikz}
+\usetikzlibrary{positioning,patterns,fit}
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\hmwkClass: \hmwkTitle} % Top center head
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ of\ \protect\pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+
+
+\newenvironment{answer}{
+    % Uncomment this if using the template to write out your solutions.
+    {\bf Answer:} \sf \begingroup \color{red}%
+}{\par\endgroup}%
+%----------------------------------------------------------------------------------------
+%	CODE INCLUSION CONFIGURATION
+%----------------------------------------------------------------------------------------
+
+\definecolor{MyDarkGreen}{rgb}{0.0,0.4,0.0} % This is the color used for comments
+\definecolor{shadecolor}{gray}{0.9}
+
+\lstloadlanguages{Python} % Load Perl syntax for listings, for a list of other languages supported see: ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/listings/listings.pdf
+\lstset{language=Python, % Use Perl in this example
+        frame=single, % Single frame around code
+        basicstyle=\footnotesize\ttfamily, % Use small true type font
+        keywordstyle=[1]\color{Blue}\bf, % Perl functions bold and blue
+        keywordstyle=[2]\color{Purple}, % Perl function arguments purple
+        keywordstyle=[3]\color{Blue}\underbar, % Custom functions underlined and blue
+        identifierstyle=, % Nothing special about identifiers
+        commentstyle=\usefont{T1}{pcr}{m}{sl}\color{MyDarkGreen}\small, % Comments small dark green courier font
+        stringstyle=\color{Purple}, % Strings are purple
+        showstringspaces=false, % Don't put marks in string spaces
+        tabsize=5, % 5 spaces per tab
+        %
+        % Put standard Perl functions not included in the default language here
+        morekeywords={rand},
+        %
+        % Put Perl function parameters here
+        morekeywords=[2]{on, off, interp},
+        %
+        % Put user defined functions here
+        morekeywords=[3]{test},
+       	%
+        morecomment=[l][\color{Blue}]{...}, % Line continuation (...) like blue comment
+        numbers=left, % Line numbers on left
+        firstnumber=1, % Line numbers start with line 1
+        numberstyle=\tiny\color{Blue}, % Line numbers are blue and small
+        stepnumber=5 % Line numbers go in steps of 5
+}
+
+% Creates a new command to include a perl script, the first parameter is the filename of the script (without .pl), the second parameter is the caption
+\newcommand{\perlscript}[2]{
+\begin{itemize}
+\item[]\lstinputlisting[caption=#2,label=#1]{#1.pl}
+\end{itemize}
+}
+
+%----------------------------------------------------------------------------------------
+%	NAME AND CLASS SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\hmwkTitle}{word2vec (49 Points)} % Assignment title
+\newcommand{\hmwkClass}{CS\ 224n Assignment \#2} % Course/class
+
+\newcommand{\ifans}[1]{\ifanswers \color{red} \vspace{5mm} \textbf{Solution: } #1 \color{black} \vspace{5mm} \fi}
+
+% Chris' notes
+\definecolor{CMpurple}{rgb}{0.6,0.18,0.64}
+\newcommand\cm[1]{\textcolor{CMpurple}{\small\textsf{\bfseries CM\@: #1}}}
+\newcommand\cmm[1]{\marginpar{\small\raggedright\textcolor{CMpurple}{\textsf{\bfseries CM\@: #1}}}}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+\title{
+\vspace{-1in}
+\textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+}
+\author{}
+%\date{\textit{\small Updated \today\ at \currenttime}} % Insert date here if you want it to appear below your name
+\date{}
+
+\setcounter{section}{0} % one-indexing
+\begin{document}
+
+\maketitle
+\vspace{-.7in}
+
+\begin{center}
+    \large{\textbf{Due on} Tuesday Jan. 23, 2024 by \textbf{4:30pm (before class)} \\ \textbf{Please do not forget to tag questions on Gradescope}}
+\end{center}
+
+\section{Understanding word2vec (31 points)}
+Recall that the key insight behind {\tt word2vec} is that \textit{`a word is known by the company it keeps'}. Concretely, consider a `center' word $c$ surrounded before and after by a context of a certain length. We term words in this contextual window `outside words' ($O$). For example, in Figure~\ref{fig:word2vec}, the context window length is 2, the center word $c$ is `banking', and the outside words are `turning', `into', `crises', and `as':
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{word2vec.png}
+    \caption{The word2vec skip-gram prediction model with window size 2}
+    \label{fig:word2vec}
+\end{figure}
+
+Skip-gram {\tt word2vec} aims to learn the probability distribution $P(O|C)$. 
+Specifically, given a specific word $o$ and a specific word $c$, we want to predict $P(O=o|C=c)$: the probability that word $o$ is an `outside' word for $c$ (i.e., that it falls within the contextual window of $c$).
+We model this probability by taking the softmax function over a series of vector dot-products: % I added the word "softmax" here because I bet a lot of students will have forgotten what softmax is and why the loss fn is called naive softmax. but if this is too wordy we can just take it out
+
+\begin{equation}
+ P(O=o \mid C=c) = \frac{\exp(\bm u_{o}^\top \bm v_c)}{\sum_{w \in \text{Vocab}} \exp(\bm u_{w}^\top \bm v_c)}
+ \label{word2vec_condprob}
+\end{equation}
+
+For each word, we learn vectors $u$ and $v$, where $\bm u_o$ is the `outside' vector representing outside word $o$, and $\bm v_c$ is the `center' vector representing center word $c$. 
+We store these parameters in two matrices, $\bm U$ and $\bm V$.
+The columns of $\bm U$ are all the `outside' vectors $\bm u_{w}$;
+the columns of $\bm V$ are all of the `center' vectors $\bm v_{w}$. 
+Both $\bm U$ and $\bm V$ contain a vector for every $w \in \text{Vocabulary}$.\footnote{Assume that every word in our vocabulary is matched to an integer number $k$. Bolded lowercase letters represent vectors. $\bm u_{k}$ is both the $k^{th}$ column of $\bm U$ and the `outside' word vector for the word indexed by $k$. $\bm v_k$ is both the $k^{th}$ column of $\bm V$ and the `center' word vector for the word indexed by $k$. \textbf{In order to simplify notation we shall interchangeably use $k$ to refer to word $k$ and the index of word $k$.}}\newline
+
+%We can think of the probability distribution $P(O|C)$ as a prediction function that we can approximate via supervised learning. For any training example, we will have a single $o$ and $c$. We will then compute a value $P(O=o|C=c)$ and report the loss. 
+Recall from lectures that, for a single pair of words $c$ and $o$, the loss is given by:
+
+\begin{equation} 
+\bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U) = -\log P(O=o| C=c).
+\label{naive-softmax}
+\end{equation}
+
+We can view this loss as the cross-entropy\footnote{The \textbf{cross-entropy loss} between the true (discrete) probability distribution $p$ and another distribution $q$ is $-\sum_i p_i \log(q_i)$.} between the true distribution $\bm y$ and the predicted distribution $\hat{\bm y}$, for a particular center word c and a particular outside word o. 
+Here, both $\bm y$ and $\hat{\bm y}$ are vectors with length equal to the number of words in the vocabulary.
+Furthermore, the $k^{th}$ entry in these vectors indicates the conditional probability of the $k^{th}$ word being an `outside word' for the given $c$. 
+The true empirical distribution $\bm y$ is a one-hot vector with a 1 for the true outside word $o$, and 0 everywhere else, for this particular example of center word c and outside word o.\footnote{Note that the true conditional probability distribution of context words for the entire training dataset would not be one-hot.}
+The predicted distribution $\hat{\bm y}$ is the probability distribution $P(O|C=c)$ given by our model in equation (\ref{word2vec_condprob}). \newline
+
+\textbf{Note:} Throughout this homework, when computing derivatives, please use the method reviewed during the lecture (i.e. no Taylor Series Approximations).
+
+\clearpage 
+\begin{enumerate}[label=(\alph*)]
+% Question 1-A
+\item (2 points) 
+Prove that the naive-softmax loss (Equation \ref{naive-softmax}) is the same as the cross-entropy loss between $\bm y$  and $\hat{\bm y}$, i.e. (note that $\bm y$ 
+ (true distribution), $\hat{\bm y}$ (predicted distribution) are vectors and $\hat{\bm y}_o$ is a scalar):
+
+\begin{equation} 
+-\sum_{w \in \text{Vocab}} \bm y_w \log(\hat{\bm y}_w) = - \log (\hat{\bm y}_o).
+\end{equation}
+
+Your answer should be one line. You may describe your answer in words.
+\begin{shaded}
+\begin{answer}
+真实的经验分布$y$是一个one-hot向量，只有真实的outside word o为1，其余地均为0；
+预测的分布$\hat{y}$是一个概率分布，通过等式\ref{Sigmoid Function}来给定：$P(O|C=c)$
+因此，
+\begin{equation}
+\begin{array}{l}
+		J_{cross-entropy}=-\sum_{w\in \text{Vocab}}y_w log(\hat{y}_w) \\= -(y_1 log(\hat{y}_1)+y_2 log(\hat{y}_2) + \cdots + y_o log(\hat{y}_o)+\cdots + y_{|V|}log(\hat{y}_{|V|})) \\
+		= -(0*log(\hat{y}_1)+0*log(\hat{y}_2)+\cdots + 1\cdot log(\hat{y}_o)+\cdots+0log(\hat{y}_{|V|}))\\
+		= -log(\hat{y}_o) = J_{naive-softmax}(v_c,o,U)
+\end{array}
+\end{equation}
+于是上述的命题得证。
+\end{answer}
+\end{shaded}
+
+% Question 1-B
+\item (6 points)
+\begin{enumerate}[label=(\roman*)]
+    \item 
+    Compute the partial derivative of $\bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)$ with respect to $\bm v_c$. \ul{Please write your answer in terms of $\bm y$, $\hat{\bm y}$, $\bm U$, and show your work to receive full credit}.
+    \begin{itemize} 
+        \item \textbf{Note}: Your final answers for the partial derivative should follow the shape convention: the partial derivative of any function $f(x)$ with respect to $x$ should have the \textbf{same shape} as $x$.\footnote{This allows us to efficiently minimize a function using gradient descent without worrying about reshaping or dimension mismatching. While following the shape convention, we're guaranteed that $\theta:= \theta - \alpha\frac{\partial J(\theta)}{\partial \theta}$ is a well-defined update rule.}
+        \item Please provide your answers for the partial derivative in vectorized form. For example, when we ask you to write your answers in terms of $\bm y$, $\hat{\bm y}$, and $\bm U$, you may not refer to specific elements of these terms in your final answer (such as $\bm y_1$, $\bm y_2$, $\dots$). 
+    \end{itemize}
+    \item
+    When is the gradient you computed equal to zero? \\
+    \textbf{Hint:} You may wish to review and use some introductory linear algebra concepts.
+    \item
+    The gradient you found is the difference between the two terms. Provide an interpretation of how each of these terms improves the word vector when this gradient is subtracted from the word vector $v_c$.
+
+\end{enumerate}
+
+\begin{shaded}
+\begin{answer}
+首先给出原等式：
+\begin{equation}
+	\bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U) = -\log P(O=o| C=c).
+\label{naive-softmax}
+\end{equation}
+
+1)首先根据上式可得：
+\begin{equation}
+	 \hat{y}_o = P(O=o|C=c)=\frac{exp(u_o^T v_c)}{\sum_{w\in \text{Vocab}} exp(u_w^T v_c)}
+\end{equation}
+
+2) 因此有：$\bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U) = - log(\hat{y}_o)$
+
+3) 求导:
+\begin{equation}
+\begin{array}{l}
+		\frac{\partial J}{\partial v_c} = -\frac{\partial (u_o^Tv_c - log(\sum_w exp(u_w^T v_c)))}{\partial v_c} \\
+		=-\frac{\partial u_o^Tv_c}{\partial v_c} + \frac{\partial log(\sum_w exp(u_w^Tv_c))}{\partial v_c} \\
+		= -u_o+ \frac{1}{\sum_w exp(u_w^T v_c)}\frac{\partial \sum_w exp(u_w^T v_c)}{\partial v_c} \\
+		=-u_o +\frac{1}{\sum_w exp(u_w^T v_c)}\sum_w exp(u_w^T v_c)u_w\\
+		=-u_o+\sum_w (\hat{y}_w u_w)
+\end{array}
+\end{equation}
+
+4) 令：
+\begin{equation}
+	y_w =\left\{
+	\begin{array}{ll}
+		1,\ \ w=o \\
+		0,\ \ w\neq o.
+	\end{array}
+	\right.
+\end{equation}
+于是有$u_o = \sum_{w\in \text{Vocab}} y_w u_w$：
+\begin{equation}
+\begin{array}{l}
+	-u_o + \sum_w (\hat{y}_w u_w)  \\
+	= \sum_{w\in \text{Vocab}} (-y_w u_w + \hat{y}_w u_w) \\
+	= \sum_{w \in \text{Vocab}}(-y_w + \hat{y}_w) u_w
+\end{array}
+\end{equation}
+
+5) 接下来对上式进行向量化，需要有$y$是one-hot向量，只在word o时取1，其余为0
+\begin{equation}
+	\frac{\partial J}{\partial v_c} = \sum_{w\in \text{Vocab}} U(\hat{y} - y)
+\end{equation}
+
+\end{answer}
+\end{shaded}
+
+
+% Question 1-C
+\item (1 point) In many downstream applications using word embeddings, L2 normalized vectors (e.g. $\mathbf{u}/||\mathbf{u}||_2$ where $||\mathbf{u}||_2 = \sqrt{\sum_i u_i^2}$) are used instead of their raw forms (e.g. $\mathbf{u}$). Let’s consider a hypothetical downstream task of binary classification of phrases as being positive or negative, where you decide the sign based on the sum of individual embeddings of the words. When would L2 normalization take away useful information for the downstream task? When would it not?
+
+\textbf{Hint:} Consider the case where $\mathbf{u}_x = \alpha\mathbf{u}_y$ for some words $x \neq y$ and some scalar $\alpha$. Give examples of words $x$ and $y$ which satisfy the given relation and why would they be affected/not affected due to the normalization?
+
+\begin{shaded}
+\begin{answer}
+L2 正则化保留了向量的方向信息，但是丢失了向量的大小信息。
+
+如题中所描述的若单词x是good，y是better，向量的长度可能影响着词向量的描述“good”的程度，此时就不适宜使用L2正则化
+
+而如果单词x是good，y是bad，两个向量的长度并不重要，而其代表的“good”的方向相反，此时就适宜使用L2正则化。
+\end{answer}
+\end{shaded}
+
+% Question 1-D
+\item (5 points) Compute the partial derivatives of $\bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)$ with respect to each of the `outside' word vectors, $\bm u_w$'s. There will be two cases: when $w=o$, the true `outside' word vector, and $w \neq o$, for all other words. Please write your answer in terms of $\bm y$, $\hat{\bm y}$, and $\bm v_c$. In this subpart, you may use specific elements within these terms as well (such as $\bm y_1$, $\bm y_2$, $\dots$). Note that $\bm u_w$ is a vector while $\bm y_1, \bm y_2, \dots$ are scalars. Show your work to receive full credit.
+
+\begin{shaded}
+\begin{answer}
+\begin{equation}
+\begin{array}{l}
+		\frac{\partial J_{native-softmax}(v_c,o,U)}{\partial u_w} = \frac{-log(\hat{y}_o)}{u_w} \\
+		=\frac{\partial -log \frac{exp(u_o^T v_c)}{\sum_{w\in \text{Vocab}}exp(u_w^T v_c)}}{\partial u_w} \\
+		= -\frac{\partial (u_o^T v_c - log(\sum_{w\in \text{Vocab}}	exp(u_w^T v_c)))}{\partial u_w} \\
+		= -\frac{\partial u_o^T v_c}{\partial u_w} +\frac{\partial log(\sum_w exp(u_w^Tv)_c	))}{\partial u_w} \\
+		= -\frac{\partial u_o^T v_c}{\partial u_w} +\frac{1}{\sum_w exp(u_w^T v_c)} \cdot \sum_w exp(u_w^T v_c) v_c
+\end{array}
+\end{equation}
+对于$-\frac{\partial u_o^T v_c}{\partial u_w}$来讲，其可写为：$-\frac{\partial u_o^T}{\partial u_w} v_c$,其中，$\frac{\partial u_o^T}{\partial u_w} = \left\{\begin{array}{c}
+	1 , w=o \\
+	0 , w\neq o 
+\end{array}\right.$，而对于$y_w$	而言，有$y_w = \left\{\begin{array}{c}
+	1 , w=o \\
+	0 , w\neq o 
+\end{array}\right.$,二者相等，所以可以将$\frac{\partial u_o^T}{\partial u_w} = y_w$，按照1-b的样式，可以将其写为$\sum_w y_w$
+
+故上式最终可化为：
+\begin{equation}
+\begin{array}{cl}
+	\frac{\partial J_{native-softmax}(v_c,o,U)}{\partial u_w} &= -\frac{\partial u_o^T v_c}{\partial u_w} +\frac{1}{\sum_w exp(u_w^T v_c)} \cdot \sum_w exp(u_w^T v_c) v_c\\
+	&= -\sum_w y_w v_c+  + \frac{1}{\sum_w exp(u_w^T v_c)} \cdot \sum_w exp(u_w^T v_c) v_c \\
+	&= \sum_w (-y_w v_c + \frac{exp(u_w^T v_c)}{\sum_w exp(u_w^T v_c)} v_c)
+\end{array}
+\end{equation}
+而我们有：
+\begin{equation}
+	\frac{exp(u_w^T v_c)}{\sum_w exp(u_w^T v_c)} = \hat{y}_w
+\end{equation}
+故最终得到：
+\begin{equation}
+	\frac{\partial J_{native-softmax}(v_c,o,U)}{\partial u_w} = \sum_w (-y_w v_c +\hat{y}_w v_c) = \sum_w(\hat{y}_w - y_w)v_c
+\end{equation}
+对于y来讲，它是一个one-hot 向量且仅在word o处为1，将上式写为$y,\hat{y},v_c$的项，则为：
+\begin{equation}
+	\frac{\partial J_{native-softmax}(v_c,o,U)}{U} =  \sum_w v_c(\hat{y} - y)^T
+\end{equation}
+
+\textbf{case 1}我们先考虑$w=o$的情况，
+\begin{equation}
+	\frac{\partial J_{native-softmax}(v_c,o,U)}{\partial u_{w=o}} = v_c (\hat{y}_{w=o} - y_{w=o})
+\end{equation}
+
+因为$y_{w=o}=1$,则上式可写为：
+\begin{equation}
+	\frac{\partial J_{native-softmax}(v_c,o,U)}{\partial u_{w=o}} = v_c (\hat{y}_{w=o} - 1)
+\end{equation}
+
+\textbf{case 2}然后再考虑$w\neq o$的情况，此时$y_{w\neq o}=0$，
+则有：
+\begin{equation}
+		\frac{\partial J_{native-softmax}(v_c,o,U)}{\partial u_{w\neq o}} = v_c \hat{y}_{w\neq o}
+\end{equation}
+
+总结如下：
+\begin{equation}
+	\frac{\partial J}{\partial u_w} = \left\{
+	\begin{array}{l}
+		v_c (\hat{y}_{w} - 1),\ \ \ if w=o \\
+		v_c \hat{y}_{w}, \ \ \ if w\neq o
+	\end{array}
+	\right.
+\end{equation}
+\end{answer}
+\end{shaded}
+
+% Question 1-E
+\item (1 point) Write down the partial derivative of $\bm J_{\text{naive-softmax}}(\bm v_c, o, \bm U)$ with respect to $\bm U$. Please break down your answer in terms of the column vectors $\frac{\partial \bm J(\bm v_c, o, \bm U)}{\partial \bm u_1}$, $\frac{\partial \bm J(\bm v_c, o, \bm U)}{\partial \bm u_2}$, $\cdots$, $\frac{\partial \bm J(\bm v_c, o, \bm U)}{\partial \bm u_{|\text{Vocab}|}}$. No derivations are necessary, just an answer in the form of a matrix.
+\begin{shaded}
+\begin{answer}
+	首先写出标量对向量求导的结果：
+	\begin{equation}
+		\frac{\partial J}{\partial U} = \left[ \frac{\partial J}{\partial u_1}\ \frac{\partial J}{\partial u_2}\ \cdots \frac{\partial J}{\partial u_{Vocab}} \right]
+	\end{equation}
+	
+	通过上一问的答案我们可知：
+	\begin{equation}
+	\frac{\partial J}{\partial u_w} = \left\{
+	\begin{array}{l}
+		v_c (\hat{y}_{w} - 1),\ \ \ if w=o \\
+		v_c \hat{y}_{w}, \ \ \ if w\neq o
+	\end{array}
+	\right.
+\end{equation}
+
+
+\end{answer}
+\end{shaded}
+
+% Question 1-F
+\item (2 points) The Leaky ReLU (Leaky Rectified Linear Unit) activation function is given by Equation \ref{LeakyReLU} and Figure~\ref{fig:leaky_relu}:
+\begin{equation}
+    \label{LeakyReLU}
+    f(x) = \max(\alpha x, x)
+\end{equation}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.3\textwidth]{leaky_relu_graph.png}
+    \caption{Leaky ReLU}
+    \label{fig:leaky_relu}
+\end{figure}
+
+Where $x$ is a scalar and $0<\alpha <1$, please compute the derivative of $f(x)$ with respect to $x$. You may ignore the case where the derivative is not defined at 0.\footnote{If you're interested in how to handle the derivative at this point, you can read more about the notion of \hyperref[https://en.wikipedia.org/wiki/Subderivative]{subderivatives}.}
+
+\begin{shaded}
+\begin{answer}
+当x>0时，
+\begin{equation}
+	\frac{\partial f(x)}{\partial x} = \frac{\partial x}{x} = 1
+\end{equation}
+
+当x<0时，
+\begin{equation}
+	\frac{\partial f(x)}{\partial x} = \frac{\partial \alpha x}{x} = \alpha
+\end{equation}
+
+综上，
+\begin{equation}
+	\frac{\partial f(x)}{\partial x} =  \left\{ 
+	\begin{array}{c}
+		1 , x>0 \\
+		\alpha, x<0
+	\end{array}
+	\right.
+\end{equation}
+\end{answer}
+\end{shaded}
+
+% Question 1-G
+\item (3 points) The sigmoid function is given by Equation \ref{Sigmoid Function}:
+
+\begin{equation}
+    \label{Sigmoid Function}
+    \sigma (x) = \frac{1}{1 + e^{-x}} = \frac{e^{x}}{e^{x} + 1}
+\end{equation}
+
+Please compute the derivative of $\sigma(x)$ with respect to $x$, where $x$ is a scalar. Please write your answer in terms of $\sigma(x)$. Show your work to receive full credit.
+
+\begin{shaded}
+\begin{answer}
+对函数求导：
+\begin{equation}
+\begin{array}{ll}
+		\frac{d \sigma(x)}{d x} &= \frac{e^x}{e^x+1} \\
+			&= \frac{e^x(e^x+1)-e^x \cdot e^x}{(e^x+1)^2} \\
+			&= \frac{e^x}{e^x+1} (\frac{1+e^x-e^x}{e^x+1}) \\
+			&= \frac{e^x}{e^x+1} (1-\frac{e^x}{e^x+1}) \\
+			&= \sigma(x) (1-\sigma(x))
+\end{array}
+\end{equation}
+\end{answer}
+\end{shaded}
+
+% Question 1-H
+\item (6 points) Now we shall consider the Negative Sampling loss, which is an alternative to the Naive Softmax loss.  Assume that $K$ negative samples (words) are drawn from the vocabulary. For simplicity of notation we shall refer to them as $w_1, w_2, \dots, w_K$, and their outside vectors as $\bm u_{w_1}, \bm u_{w_2}, \dots, \bm u_{w_K}$.\footnote{Note: In the notation for parts (g) and (h), we are using words, not word indices, as subscripts for the outside word vectors.} For this question, assume that the $K$ negative samples are distinct. In other words, $i\neq j$ implies $w_i\neq w_j$ for $i,j\in\{1,\dots,K\}$.
+Note that $o\notin\{w_1, \dots, w_K\}$. 
+For a center word $c$ and an outside word $o$, the negative sampling loss function is given by:
+
+\begin{equation}
+\bm J_{\text{neg-sample}}(\bm v_c, o, \bm U) = -\log(\sigma(\bm u_o^\top \bm v_c)) - \sum_{s=1}^K \log(\sigma(-\bm u_{w_s}^\top \bm v_c))
+\end{equation}
+for a sample $w_1, \ldots w_K$, where $\sigma(\cdot)$ is the sigmoid function.\footnote{Note: The loss function here is the negative of what Mikolov et al.\ had in their original paper, because we are doing a minimization instead of maximization in our assignment code. Ultimately, this is the same objective function.}
+
+\begin{enumerate}[label=(\roman*)]
+\item Please repeat parts (b) and (d), computing the partial derivatives of $\bm J_{\text{neg-sample}}$ with respect to $\bm v_c$, with respect to $\bm u_o$, and with respect to the $s^{th}$ negative sample $\bm u_{w_s}$. Please write your answers in terms of the vectors $\bm v_c$, $\bm u_o$, and $\bm u_{w_s}$, where $s \in [1, K]$. Show your work to receive full credit. \textbf{Note:} you should be able to use your solution to part (g) to help compute the necessary gradients here.
+
+\item In the lecture, we learned that an efficient implementation of backpropagation leverages the reuse of previously computed partial derivatives. Which quantity could you reuse (we store the common terms in a single matrix/vector) amongst the three partial derivatives calculated above to minimize duplicate computation? 
+
+Write your answer in terms of \\ $\bm{U}_{o, \{w_1, \dots, w_K\}} = \begin{bmatrix} \bm{u}_o, -\bm{u}_{w_1}, \dots, -\bm{u}_{w_K} \end{bmatrix}$, a matrix with the outside vectors stacked as columns, and $\bm{1}$, a $(K + 1) \times 1$ vector of 1's.\footnote{Note: NumPy will automatically broadcast 1 to a vector of 1's if the computation requires it, so you generally don't have to construct $\bm{1}$ on your own during implementation.}
+Additional terms and functions (other than $\bm{U}_{o, \{w_1, \dots, w_K\}}$ and $\bm{1}$) can be used in your solution.
+\item Describe with one sentence why this loss function is much more efficient to compute than the naive-softmax loss.
+\end{enumerate}
+
+Caveat: So far we have looked at re-using quantities and approximating softmax with sampling for faster gradient descent. Do note that some of these optimizations might not be necessary on modern GPUs and are, to some extent, artifacts of the limited compute resources available at the time when these algorithms were developed.
+
+\begin{shaded}
+\begin{answer}
+(i)
+\begin{equation}
+\bm J_{\text{neg-sample}}(\bm v_c, o, \bm U) = -\log(\sigma(\bm u_o^\top \bm v_c)) - \sum_{s=1}^K \log(\sigma(-\bm u_{w_s}^\top \bm v_c))
+\end{equation}
+
+对上式子$v_c$，$u_o$和第$s^{th}$个负样本$u_{w_s}$。
+
+首先考虑$v_c$：
+\begin{equation}
+	\begin{array}{cl}
+ \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial  v_c} &= -\frac{\partial \log(\sigma(\bm u_o^\top \bm v_c)) +\sum_{s=1}^K \log(\sigma(-\bm u_{w_s}^\top \bm v_c)) }{\partial v_c}\\
+&= -\frac{1}{\sigma(u_o^T v_c)} \cdot \sigma(u_o^T v_c) (1- \sigma(u_o^T v_c) ) u_o \\
+& - \sum_{s=1}^k \frac{1}{\sigma(-u_{w_s}^T v_c)}\sigma(-u_{w_s}^T)v_c) (1-\sigma(-u_{w_s}^T v_c)) (-u_{w_s}^T)	\\
+&= - (1-\sigma(u_o^T v_c))u_o +\sum_{s=1}^k(1-\sigma(-u_{w_s}^T v_c))) u_{w_s}\\
+&= u_o (\sigma(u_o^T v_c)-1) + \sum_{s=1}^k u_{w_s} (1- \sigma(-u_{w_s}^T v_c))
+\end{array}
+\end{equation}
+
+
+然后考虑$J$对$u_o$的导数：
+\begin{equation}
+	\begin{array}{cl}
+ \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial  u_o} &= -\frac{\partial \log(\sigma(\bm u_o^\top \bm v_c)) + \sum_{s=1}^K \log(\sigma(-\bm u_{w_s}^\top \bm v_c)) }{\partial u_o}\\ 	
+ &= -\frac{1}{\sigma(u_o^T v_c)} \cdot \sigma(u_o^T v_c) (1- \sigma(u_o^T v_c) ) v_c \\
+ & - \frac{\partial \sum_{s=1}^K log(\sigma(-u_{w_s}^T v_c))}{\partial u_o}
+ \end{array}
+\end{equation}
+
+考虑等式的最后一部分$\frac{\partial \sum_s=1 ^K log(\sigma(-u_{w_s}^T v_c))}{\partial u_o}$，我们首先知道$o \notin \{w_1,\cdots,w_K\}$，也就是说$\frac{\partial \sum_s=1 ^K log(\sigma(-u_{w_s}^T v_c))}{\partial u_o}=0$，则原式可化为：
+\begin{equation}
+	\begin{array}{cl}
+ \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial  u_{o}} &= -\frac{1}{\sigma(u_o^T v_c)} \cdot \sigma(u_o^T v_c) (1- \sigma(u_o^T v_c) ) v_c - 0\\
+ & = v_c(\sigma(u_o^Tv_c)-1)
+ \end{array}
+\end{equation}
+
+然后考虑$J$对$u_{w_s}$的导数：
+\begin{equation}
+	\begin{array}{cl}
+ \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial  u_{w_s}} &= -\frac{\partial \log(\sigma(\bm u_o^\top \bm v_c)) + \sum_{s=1}^K \log(\sigma(-\bm u_{w_s}^\top \bm v_c)) }{\partial u_{w_s}}\\ 	
+ &= \frac{\partial log(\sigma(u_o^T v_c))}{\partial u_{w_s}}- \frac{\sum_{s=1}^K \log(\sigma(-\bm u_{w_s}^\top \bm v_c))}{\partial u_{w_s}}
+ \end{array}
+\end{equation}
+对于等式的第一部分$\frac{\partial log(\sigma(u_o^T v_c))}{\partial u_{w_s}}$来讲，我们有$u_o \notin u_{w_s}$，所以此部分导数为0，于是上式可化为：
+\begin{equation}
+	\begin{array}{cl}
+ \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial  u_{w_s}} &=  0 -\frac{\sum_{s=1}^K \log(\sigma(-\bm u_{w_s}^\top \bm v_c))}{\partial u_{w_s}}
+ \end{array} 
+\end{equation}
+对于等式的第二部分来讲，$o \notin \{w_1,\dots,w_K\}$，将求和式子展开，只有$u_{w_s} = u_{w_s}$时，第二项导数不为零，求和的其余项对$u_{w_s}$求导均为零，于是能够得到：
+\begin{equation}
+	\begin{array}{cl}
+ \frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial  u_{w_s}} &=  0-(1-\sigma(-u_{w_s}^Tv_c))(-v_c) \\
+ & = v_c(1-\sigma(-u_{w_s}^Tv_c)) , where s\in [1,K]
+ \end{array}
+\end{equation}
+
+(ii)
+
+在上述运算的过程中，可以观察到$\sigma(u_o^T v_c)-1$和$(1-\sigma(-u_{w_s}^T v_c))$形式类似，可以通过矩阵运算来获得一次之后重复使用，结合矩阵$U_{o,\{w_1,\dots,w_K\}}=\left[u_o,-u_{w_1},\cdots,-u_{w_K}\right]$的定义，于是得到：
+\begin{equation}
+	\sigma(U^T v_c)-1 = \left[
+	\begin{array}{c}
+		\sigma(u_o^T v_c)-1 \\
+		\sigma(u_{w_1}^T v_c)-1 \\
+		\vdots \\
+		\sigma(u_{w_K}^T v_c)-1
+	\end{array}
+	\right]
+\end{equation}
+
+
+(iii)
+negative sampling loss只使用了$K$个负样本进行计算
+
+native softmax loss是在整个词汇表$|V|$上来进行计算的。
+
+所以negative sampling loss的计算效率要更高一些。
+\end{answer}
+\end{shaded}
+
+% Question 1-I
+\item (2 points) Now we will repeat the previous exercise, but without the assumption that the $K$ sampled words are distinct.  Assume that $K$ negative samples (words) are drawn from the vocabulary. For simplicity of notation we shall refer to them as $w_1, w_2, \dots, w_K$ and their outside vectors as $\bm u_{w_1}, \dots, \bm u_{w_K}$. In this question, you may not assume that the words are distinct. In other words, $w_i=w_j$ may be true when $i\neq j$ is true.
+Note that $o\notin\{w_1, \dots, w_K\}$. 
+For a center word $c$ and an outside word $o$, the negative sampling loss function is given by:
+
+\begin{equation}
+\bm J_{\text{neg-sample}}(\bm v_c, o, \bm U) = -\log(\sigma(\bm u_o^\top \bm v_c)) - \sum_{s=1}^K \log(\sigma(-\bm u_{w_s}^\top \bm v_c))
+\end{equation}
+for a sample $w_1, \ldots w_K$, where $\sigma(\cdot)$ is the sigmoid function.
+
+Compute the partial derivative of $\bm J_{\text{neg-sample}}$ with respect to a negative sample $\bm u_{w_s}$. Please write your answers in terms of the vectors $\bm v_c$ and $\bm u_{w_s}$, where $s \in [1, K]$. Show your work to receive full credit. Hint: break up the sum in the loss function into two sums: a sum over all sampled words equal to $w_s$ and a sum over all sampled words not equal to $w_s$. Notation-wise, you may write `equal' and `not equal' conditions below the summation symbols, such as in Equation \ref{skip-gram}.
+
+\begin{shaded}
+\begin{answer}
+这部分内容不再假设抽样的样本中词向量是不同的，也就是说有可能出现词向量相同的情况。
+首先是对$v_c$的导数
+\begin{equation}
+\begin{array}{cl}
+		\frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial u_{w_s}} &= \frac{ \partial (-\log(\sigma(\bm u_o^\top \bm v_c)) - \sum_{s=1}^K \log(\sigma(-\bm u_{w_s}^\top \bm v_c)))} {\partial u_{w_s}}\\
+		&=\frac{ \partial (-\log(\sigma(\bm u_o^\top \bm v_c))}{\partial u_{w_s}} - \frac{\partial \sum_{s=1}^K \log(\sigma(-\bm u_{w_s}^\top \bm v_c)))}{\partial u_{w_s}}
+\end{array}
+\end{equation}
+在上述公式中，由于$o \notin \{w_1,\dots,w_K\}$，故第一项的导数为：
+\begin{equation}
+		\frac{ \partial (-\log(\sigma(\bm u_o^\top \bm v_c))}{\partial u_{w_s}} =  0
+\end{equation}
+将第二项的导数中求和部分分为两部分，第一部分为$w_i =w_s$的部分，第二部分为$w_i \neq w_s$的部分，则求和可以分为两部分$\sum_{i=1:K \text{且} w_i=w_s}$和$\sum_{i=1:K \text{且} w_i\neq w_s}$：
+\begin{equation}
+	\begin{array}{cl}
+		-\frac{\partial \sum_{s=1}^K \log(\sigma(-\bm u_{w_s}^\top \bm v_c)))}{\partial u_{w_s}} &= -\frac{\sum_{i=1:K \text{且} w_i=w_s} \partial log(\sigma(-u_{w_i}^T v_c))}{\partial  u_{w_s}} - \frac{\sum_{i=1:K \text{且} w_i\neq w_s}\partial log(\sigma(-u_{w_i}^T v_c))}{\partial u_{w_s}}\\
+	\end{array}
+\end{equation}
+对于$\sum_{i=1:K \text{且} w_i\neq w_s}$此部分来讲，其求导得到的结果为0，则上式子可继续推导为：
+\begin{equation}
+	\frac{\sum_{i=1:K \text{且} w_i\neq w_s}\partial log(\sigma(-u_{w_i}^T v_c))}{\partial u_{w_s}} = 0
+\end{equation}
+和
+\begin{equation}
+	\begin{array}{cl}
+		\frac{\sum_{i=1:K \text{且} w_i=w_s} \partial log(\sigma(-u_{w_i}^T v_c))}{\partial  u_{w_s}} &= \sum_{i=1:K \text{且} w_i=w_s}\frac{1}{\sigma(-u_{w_i}^T v_c)} \cdot \sigma(-u_{w_i}^T v_c) (1- \sigma(-u_{w_i}^T v_c)) (-v_c) \\
+		&= \sum_{i=1:K \text{且} w_i=w_s}(1-\sigma(-u_{w_i}^T v_c))(-v_c)
+	\end{array}
+\end{equation}
+
+则原式为：
+\begin{equation}
+	\begin{array}{cl}
+		\frac{\partial \bm J_{\text{neg-sample}}(\bm v_c, o, \bm U)}{\partial u_{w_s}} &= \frac{ \partial (-\log(\sigma(\bm u_o^\top \bm v_c)) - \sum_{s=1}^K \log(\sigma(-\bm u_{w_s}^\top \bm v_c)))} {\partial u_{w_s}}\\
+		&=\frac{ \partial (-\log(\sigma(\bm u_o^\top \bm v_c))}{\partial u_{w_s}} -\frac{\sum_{i=1:K \text{且} w_i=w_s} \partial log(\sigma(-u_{w_i}^T v_c))}{\partial  u_{w_s}} - \frac{\sum_{i=1:K \text{且} w_i\neq w_s}\partial log(\sigma(-u_{w_i}^T v_c))}{\partial u_{w_s}} \\
+		& = 0-0+ \sum_{i=1:K \text{且} w_i=w_s} v_c (1-\sigma(-u_{w_i}^T v_c)) \\
+		&= \sum_{i=1:K \text{且} w_i=w_s} v_c (1-\sigma(-u_{w_i}^T v_c))
+\end{array}
+\end{equation}
+
+\end{answer}
+\end{shaded}
+
+% Question 1-J
+\item (3 points) Suppose the center word is $c = w_t$ and the context window is $[w_{t-m}$, $\ldots$, $w_{t-1}$, $w_{t}$, $w_{t+1}$, $\ldots$, $w_{t+m}]$, where $m$ is the context window size. Recall that for the  skip-gram version of {\tt word2vec}, the total loss for the context window is:
+\begin{equation}
+\label{skip-gram}
+\bm J_{\textrm{skip-gram}}(\bm v_c, w_{t-m},\ldots w_{t+m}, \bm U) = \sum_{\substack{-m\le j \le m \\ j\ne 0}} \bm J(\bm v_c, w_{t+j}, \bm U)
+\end{equation}
+
+Here, $\bm J(\bm v_c, w_{t+j}, \bm U)$ represents an arbitrary loss term for the center word $c=w_t$ and outside word $w_{t+j}$. $\bm J(\bm v_c, w_{t+j}, \bm U)$ could be $\bm J_{\text{naive-softmax}}(\bm v_c, w_{t+j}, \bm U)$ or $\bm J_{\text{neg-sample}}(\bm v_c, w_{t+j}, \bm U)$, depending on your implementation.
+
+Write down three partial derivatives: 
+\begin{enumerate}[label=(\roman*)]
+    \item ${\frac{\partial \bm J_{\textrm{skip-gram}}(\bm v_c, w_{t-m},\ldots w_{t+m}, \bm U)} {\partial \bm U}}$
+    \item ${\frac{\partial \bm J_{\textrm{skip-gram}}(\bm v_c, w_{t-m},\ldots w_{t+m}, \bm U)} {\partial \bm v_c}}$
+    \item ${\frac{\partial \bm J_{\textrm{skip-gram}}(\bm v_c, w_{t-m},\ldots w_{t+m}, \bm U)} {\partial \bm v_w}}$ when $w \ne c$
+\end{enumerate}
+Write your answers in terms of ${\frac{\partial \bm J(\bm v_c, w_{t+j}, \bm U)}{\partial \bm U}}$ and ${\frac{\partial \bm J(\bm v_c, w_{t+j}, \bm U)}{\partial \bm v_c}}$. This is very simple -- each solution should be one line.
+
+\begin{shaded}
+\begin{answer}
+(i) 
+\begin{equation}
+	\frac{\partial \bm J_{\textrm{skip-gram}}(\bm v_c, w_{t-m},\ldots w_{t+m}, \bm U)} {\partial \bm U} = \sum_{\substack{-m\leq j\leq m \\ j\neq 0}}\frac{\partial J(v_c,w_{t+j},U)}{\partial U}
+\end{equation}
+
+(ii)
+\begin{equation}
+	\frac{\partial \bm J_{\textrm{skip-gram}}(\bm v_c, w_{t-m},\ldots w_{t+m}, \bm U)} {\partial \bm v_c} = \sum_{\substack{-m\leq j\leq m \\ j\neq 0}}\frac{\partial J(v_c,w_{t+j},U)}{\partial v_c}
+\end{equation}
+
+(iii) 
+\begin{equation}
+	\frac{\partial \bm J_{\textrm{skip-gram}}(\bm v_c, w_{t-m},\ldots w_{t+m}, \bm U)} {\partial \bm v_w}_{w\neq c} = 0
+\end{equation}
+\end{answer}
+\end{shaded}
+
+\textit{\textbf{Once you're done:} Given that you computed the derivatives of $\bm J(\bm v_c, w_{t+j}, \bm U)$ with respect to all the model parameters $\bm U$ and $\bm V$ in parts (a) to (c), you have now computed the derivatives of the full loss function $\bm J_{\text{skip-gram}}$ with respect to all parameters. You're ready to implement \texttt{word2vec}!} % we could remove this line but I added it to make sure they understand why we did all this.
+
+\end{enumerate}
+
+\section{Implementing word2vec (18 points)}
+In this part, you will implement the word2vec model and train your own word vectors with stochastic gradient descent (SGD). Before you begin, first run the following commands within the assignment directory in order to create the appropriate conda virtual environment. This guarantees that you have all the necessary packages to complete the assignment. \textbf{Windows users} may wish to install the Linux Windows Subsystem\footnote{https://techcommunity.microsoft.com/t5/windows-11/how-to-install-the-linux-windows-subsystem-in-windows-11/m-p/2701207}. Also note that you probably want to finish the previous math section before writing the code since you will be asked to implement the math functions in Python. You’ll probably want to implement and test each part of this section in order, since the questions are cumulative.
+
+\begin{minted}{bash}
+    conda env create -f env.yml
+    conda activate a2
+\end{minted}
+
+Once you are done with the assignment you can deactivate this environment by running:
+\begin{minted}{bash}
+    conda deactivate
+\end{minted}
+
+For each of the methods you need to implement, we included approximately how many lines of code our solution has in the code comments. These numbers are included to guide you. You don't have to stick to them, you can write shorter or longer code as you wish. If you think your implementation is significantly longer than ours, it is a signal that there are some \texttt{numpy} methods you could utilize to make your code both shorter and faster. \texttt{for} loops in Python take a long time to complete when used over large arrays, so we expect you to utilize \texttt{numpy} methods. We will be checking the efficiency of your code. You will be able to see the results of the autograder when you submit your code to \texttt{Gradescope}, we recommend submitting early and often.
+
+Note: If you are using Windows and have trouble running the .sh scripts used in this part, we recommend trying \href{https://github.com/bmatzelle/gow}{Gow} or manually running commands in the scripts.
+
+\begin{enumerate}[label=(\alph*)]
+    % Question 2-A
+    \item (12 points) We will start by implementing methods in \texttt{word2vec.py}. You can test a particular method by running \texttt{python word2vec.py m} where \texttt{m} is the method you would like to test. For example, you can test the sigmoid method by running \texttt{python word2vec.py sigmoid}.
+    
+    \begin{enumerate}[label=(\roman*)]
+        \item Implement the \texttt{sigmoid} method, which takes in a vector and applies the sigmoid function to it.
+        \item Implement the softmax loss and gradient in the \texttt{naiveSoftmaxLossAndGradient} method.
+        \item Implement the negative sampling loss and gradient in the \texttt{negSamplingLossAndGradient} method.
+        \item Implement the skip-gram model in the \texttt{skipgram} method. 
+    \end{enumerate}
+    
+    When you are done, test your entire implementation by running \texttt{python word2vec.py}.
+    
+    % Question 2-B
+    \item (4 points) Complete the implementation for your SGD optimizer in the \texttt{sgd} method of \texttt{sgd.py}. Test your implementation by running \texttt{python sgd.py}.
+    
+    % Question 2-C
+    \item (2 points) Show time! Now we are going to load some real data and train word vectors with everything you just implemented! We are going to use the Stanford Sentiment Treebank (SST) dataset to train word vectors, and later apply them to a simple sentiment analysis task. You will need to fetch the datasets first. To do this, run \texttt{sh get\_datasets.sh}. There is no additional code to write for this part; just run \texttt{python run.py}.
+    
+    \emph{Note: The training process may take a long time depending on the efficiency of your implementation and the compute power of your machine \textbf{(an efficient implementation takes one to two hours)}. Plan accordingly!}
+    
+    After 40,000 iterations, the script will finish and a visualization for your word vectors will appear. It will also be saved as \texttt{word\_vectors.png} in your project directory. \textbf{Include the plot in your homework write up.} In at most three sentences, briefly explain what you see in the plot. This may include, but is not limited to, observations on clusters and words that you expect to cluster but do not.
+    
+\begin{shaded}
+\begin{answer}
+
+\end{answer}
+\end{shaded}
+
+\section{Submission Instructions}
+You shall submit this assignment on Gradescope as two submissions -- one for ``Assignment 2 [coding]" and another for `Assignment 2 [written]":
+\begin{enumerate}
+    \item Run the \texttt{collect\_submission.sh} script to produce your \texttt{assignment2.zip} file.
+    \item Upload your \texttt{assignment2.zip} file to Gradescope to ``Assignment 2 [coding]".
+    \item Upload your written solutions to Gradescope to ``Assignment 2 [written]".
+\end{enumerate}
+
+\end{enumerate}
+\end{document}
