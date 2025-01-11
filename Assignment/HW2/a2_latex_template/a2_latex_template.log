@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2025.1.6)  8 JAN 2025 14:53
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2025.1.6)  8 JAN 2025 15:40
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -915,116 +915,106 @@ File: lstlang1.sty 2024/02/21 1.10 listings language file
 )
 runsystem(command -v pygmentize && touch a2_latex_template.aex)...executed.
 
+runsystem(rm a2_latex_template.aex)...executed.
 
-
-./a2_latex_template.tex:124: Package minted Error: You must have `pygmentize' installed to use this package.
-
-See the minted package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.124 \begin{document}
-                      
-Refer to the installation instructions in the minted documentation for more information.
-
-(./a2_latex_template.aux
+ (./a2_latex_template.aux
 
 LaTeX Warning: Label `naive-softmax' multiply defined.
 
 )
 \openout1 = `a2_latex_template.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 124.
-LaTeX Font Info:    ... okay on input line 124.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 124.
-LaTeX Font Info:    ... okay on input line 124.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 124.
-LaTeX Font Info:    ... okay on input line 124.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 124.
-LaTeX Font Info:    ... okay on input line 124.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 124.
-LaTeX Font Info:    ... okay on input line 124.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 124.
-LaTeX Font Info:    ... okay on input line 124.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 124.
-LaTeX Font Info:    ... okay on input line 124.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 124.
-LaTeX Font Info:    ... okay on input line 124.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 124.
-LaTeX Font Info:    ... okay on input line 124.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 124.
-LaTeX Font Info:    ... okay on input line 124.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 126.
+LaTeX Font Info:    ... okay on input line 126.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 126.
+LaTeX Font Info:    ... okay on input line 126.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 126.
+LaTeX Font Info:    ... okay on input line 126.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 126.
+LaTeX Font Info:    ... okay on input line 126.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 126.
+LaTeX Font Info:    ... okay on input line 126.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 126.
+LaTeX Font Info:    ... okay on input line 126.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 126.
+LaTeX Font Info:    ... okay on input line 126.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 126.
+LaTeX Font Info:    ... okay on input line 126.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 126.
+LaTeX Font Info:    ... okay on input line 126.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 126.
+LaTeX Font Info:    ... okay on input line 126.
 
 Package fontspec Info: Adjusting the maths setup (use [no-math] to avoid
 (fontspec)             this).
 
 \symlegacymaths=\mathgroup9
 LaTeX Font Info:    Overwriting symbol font `legacymaths' in version `bold'
-(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 124.
-LaTeX Font Info:    Redeclaring math accent \acute on input line 124.
-LaTeX Font Info:    Redeclaring math accent \grave on input line 124.
-LaTeX Font Info:    Redeclaring math accent \ddot on input line 124.
-LaTeX Font Info:    Redeclaring math accent \tilde on input line 124.
-LaTeX Font Info:    Redeclaring math accent \bar on input line 124.
-LaTeX Font Info:    Redeclaring math accent \breve on input line 124.
-LaTeX Font Info:    Redeclaring math accent \check on input line 124.
-LaTeX Font Info:    Redeclaring math accent \hat on input line 124.
-LaTeX Font Info:    Redeclaring math accent \dot on input line 124.
-LaTeX Font Info:    Redeclaring math accent \mathring on input line 124.
-LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 124.
-LaTeX Font Info:    Redeclaring math symbol \Delta on input line 124.
-LaTeX Font Info:    Redeclaring math symbol \Theta on input line 124.
-LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 124.
-LaTeX Font Info:    Redeclaring math symbol \Xi on input line 124.
-LaTeX Font Info:    Redeclaring math symbol \Pi on input line 124.
-LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 124.
-LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 124.
-LaTeX Font Info:    Redeclaring math symbol \Phi on input line 124.
-LaTeX Font Info:    Redeclaring math symbol \Psi on input line 124.
-LaTeX Font Info:    Redeclaring math symbol \Omega on input line 124.
-LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 124.
-LaTeX Font Info:    Redeclaring symbol font `operators' on input line 124.
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 126.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 126.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 126.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 126.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 126.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 126.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 126.
+LaTeX Font Info:    Redeclaring math accent \check on input line 126.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 126.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 126.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 126.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 126.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 126.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 126.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 126.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 126.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 126.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 126.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 126.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 126.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 126.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 126.
+LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 126.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 126.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `normal' on input line 124.
+(Font)              `operators' in the math version `normal' on input line 126.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 124.
+(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 126.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `bold' on input line 124.
+(Font)              `operators' in the math version `bold' on input line 126.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 124.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 126.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 124.
+(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 126.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 124.
+(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 126.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 124.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 126.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 124.
+(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 126.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> TU/pcr/m/n on input line 124.
+(Font)                  OT1/cmtt/m/n --> TU/pcr/m/n on input line 126.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 124.
+(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 126.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 124.
+(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 126.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 124.
+(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 126.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> TU/pcr/b/n on input line 124.
+(Font)                  OT1/cmtt/m/n --> TU/pcr/b/n on input line 126.
 \c@lstlisting=\count403
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring OFF on input line 124.
+Package hyperref Info: Link coloring OFF on input line 126.
  (./a2_latex_template.out) (./a2_latex_template.out)
 \@outlinefile=\write6
 \openout6 = `a2_latex_template.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 127.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 129.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 127.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 129.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
@@ -1044,11 +1034,11 @@ Package fontspec Info: Could not resolve font "STFangsong/B" (it probably
 Package fontspec Info: Could not resolve font "STFangsong/I" (it probably
 (fontspec)             doesn't exist).
 
-LaTeX Font Info:    Trying to load font information for TU+pcr on input line 134.
-LaTeX Font Info:    No file TUpcr.fd. on input line 134.
+LaTeX Font Info:    Trying to load font information for TU+pcr on input line 136.
+LaTeX Font Info:    No file TUpcr.fd. on input line 136.
 
 LaTeX Font Warning: Font shape `TU/pcr/m/n' undefined
-(Font)              using `TU/lmr/m/n' instead on input line 134.
+(Font)              using `TU/lmr/m/n' instead on input line 136.
 
 
 Package fontspec Info: Font family 'STFangsong(0)' created for font
@@ -1064,12 +1054,12 @@ Package fontspec Info: Font family 'STFangsong(0)' created for font
 File: word2vec.png Graphic file (type bmp)
 <word2vec.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 152--157
+Underfull \hbox (badness 10000) in paragraph at lines 154--159
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 166--171
+Underfull \hbox (badness 10000) in paragraph at lines 168--173
 
  []
 
@@ -1104,71 +1094,19 @@ File: leaky_relu_graph.png Graphic file (type bmp)
 <leaky_relu_graph.png>
 
 
-LaTeX Warning: Hyper reference `https://en.wikipedia.org/wiki/Subderivative' on page 6 undefined on input line 395.
+LaTeX Warning: Hyper reference `https://en.wikipedia.org/wiki/Subderivative' on page 6 undefined on input line 397.
 
 [6] [7] [8] [9] [10]
 
 LaTeX Font Warning: Font shape `TU/pcr/m/it' undefined
-(Font)              using `TU/pcr/m/n' instead on input line 644.
+(Font)              using `TU/pcr/m/n' instead on input line 646.
 
 \openout3 = `a2_latex_template.pyg'.
 
-(./_minted-a2_latex_template/default.pygstyle)
-runsystem(pygmentize -S default -f latex -P commandprefix=PYG > _minted-a2_latex_template/default.pygstyle)...executed.
-
- (./_minted-a2_latex_template/default.pygstyle)
-
-./a2_latex_template.tex:654: Package minted Error: Cannot find Pygments style default.
-
-See the minted package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.654 \end{minted}
-                  
-Cannot find Pygments style default
-
-runsystem(pygmentize -l 'bash' -f latex -P commandprefix=PYG -F tokenmerge -P stripnl='False' -o _minted-a2_latex_template/00105553A38348506AEB5924D396213EEC1326AE0B1BCF33CF13323797179D3A.pygtex a2_latex_template.pyg)...executed.
-
-
-./a2_latex_template.tex:654: Package minted Error: Missing Pygments output; \inputminted was
-probably given a file that does not exist--otherwise, you may need 
-the outputdir package option, or may be using an incompatible build tool,
-or may be using frozencache with a missing file.
-
-See the minted package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.654 \end{minted}
-                  
-This could be caused by using -output-directory or -aux-directory 
-without setting minted's outputdir, or by using a build tool that 
-changes paths in ways minted cannot detect, 
-or using frozencache with a missing file.
-
+(./_minted-a2_latex_template/default.pygstyle) (./_minted-a2_latex_template/00105553A38348506AEB5924D396213EEC1326AE0B1BCF33CF13323797179D3A.pygtex)
 \openout3 = `a2_latex_template.pyg'.
 
-runsystem(pygmentize -l 'bash' -f latex -P commandprefix=PYG -F tokenmerge -P stripnl='False' -o _minted-a2_latex_template/AE3F057C16A500D0523D3B8E91488750EC1326AE0B1BCF33CF13323797179D3A.pygtex a2_latex_template.pyg)...executed.
-
-
-./a2_latex_template.tex:659: Package minted Error: Missing Pygments output; \inputminted was
-probably given a file that does not exist--otherwise, you may need 
-the outputdir package option, or may be using an incompatible build tool,
-or may be using frozencache with a missing file.
-
-See the minted package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.659 \end{minted}
-                  
-This could be caused by using -output-directory or -aux-directory 
-without setting minted's outputdir, or by using a build tool that 
-changes paths in ways minted cannot detect, 
-or using frozencache with a missing file.
-
-[11]
+ (./_minted-a2_latex_template/AE3F057C16A500D0523D3B8E91488750EC1326AE0B1BCF33CF13323797179D3A.pygtex) [11]
 
 Package caption Warning: Unused \captionsetup[table] on input line 22.
 See the caption package documentation for explanation.
@@ -1196,10 +1134,10 @@ runsystem(rm a2_latex_template.pyg)...executed.
 
  ) 
 Here is how much of TeX's memory you used:
- 33630 strings out of 474773
- 715401 string characters out of 5757725
+ 33734 strings out of 474773
+ 716992 string characters out of 5757725
  1946839 words of memory out of 5000000
- 55116 multiletter control sequences out of 15000+600000
+ 55215 multiletter control sequences out of 15000+600000
  576267 words of font info for 147 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  93i,12n,97p,928b,646s stack positions out of 10000i,1000n,20000p,200000b,200000s

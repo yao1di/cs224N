@@ -18,7 +18,7 @@ def sigmoid(x):
     """
 
     ### YOUR CODE HERE (~1 Line)
-
+    s = 1 / (1 + np.exp(-x))
     ### END YOUR CODE
 
     return s
@@ -37,6 +37,8 @@ def naiveSoftmaxLossAndGradient(
     for our word2vec models. For those unfamiliar with numpy notation, note 
     that a numpy ndarray with a shape of (x, ) is a one-dimensional array, which
     you can effectively treat as a vector with length x.
+    
+    center word 的词嵌入 和 outside word 词嵌入。
 
     Arguments:
     centerWordVec -- numpy ndarray, center word's embedding
@@ -60,6 +62,31 @@ def naiveSoftmaxLossAndGradient(
     """
 
     ### YOUR CODE HERE (~6-8 Lines)
+    ## softmax 计算
+    # U^T * v_c = [uw_1, uw_2, ..., uw_N] * v_c
+    # (N,d) * (d,) => (N,)
+    # e^(U^T *v_c) /(1+e^(U^T *v_c)) => shape(N,)
+    probs = softmax(np.dot(outsideVectors, centerWordVec))
+    # shape=> 单词的个数
+    #print(probs.shape)
+    ## 计算损失 第 outsideWordIdx 个单词的概率
+    loss = -np.log(probs[outsideWordIdx])
+
+    ## 计算梯度
+    # 第 outsideWordIdx 个单词的真实概率为 1 当o == c 时为1，否则为0
+    y_true = np.zeros(probs.shape)
+    y_true[outsideWordIdx] = 1
+
+    ## gradient of center word 用于对center word 的词向量本身进行迭代更新
+    # (N,d)^T * (N,) => (d,)
+    gradCenterVec = np.dot(outsideVectors.T, (probs - y_true))
+
+    ## gradient of outside word
+    diff = probs - y_true  # (N,)
+    gradOutsideVecs = np.zeros_like(outsideVectors)  # (N,d)
+    for i in range(len(diff)):
+        gradOutsideVecs[i] = centerWordVec * diff[i]
+    # 更新outside word的词向量本身
 
     ### Please use the provided softmax function (imported earlier in this file)
     ### This numerically stable implementation helps you avoid issues pertaining
@@ -105,14 +132,56 @@ def negSamplingLossAndGradient(
 
     # Negative sampling of words is done for you. Do not modify this if you
     # wish to match the autograder and receive points!
+    # 采样出来K个负样本，和outsidewordIdx不同
+
+    ## 基本准备
     negSampleWordIndices = getNegativeSamples(outsideWordIdx, dataset, K)
-    indices = [outsideWordIdx] + negSampleWordIndices
+    indices = [outsideWordIdx] + negSampleWordIndices## 此处要考虑抽出的word可能相同的情况 一共抽出来11个样本
 
-    ### YOUR CODE HERE (~10 Lines)
+    ## 对正样本来讲，
+    u_o = outsideVectors[outsideWordIdx]
+    v_c = centerWordVec
+    u_w = outsideVectors[negSampleWordIndices]
+    U = outsideVectors[indices]
+    U[1:] = -U[1:]
+    tempMatrix = sigmoid(np.dot(U,centerWordVec)) - 1
+    gradCenterVec = np.zeros_like(v_c)
+    gradOutsideVecs = np.zeros_like(outsideVectors)
 
-    ### Please use your implementation of sigmoid in here.
+    loss = -np.log(sigmoid(np.dot(u_o.T,v_c)))
+    gradCenterVec += u_o * tempMatrix[0]
+    gradOutsideVecs[outsideWordIdx] += v_c * tempMatrix[0]
 
-    ### END YOUR CODE
+    ## 对负样本来讲
+    for i in range(K):
+        neg_idx = i+1
+        loss += -np.log(tempMatrix[neg_idx]+1)
+        gradCenterVec += -np.dot(u_w[i].T,tempMatrix[neg_idx])
+        gradOutsideVecs[negSampleWordIndices[i]] += -v_c * tempMatrix[neg_idx]
+    # #
+    # ### YOUR CODE HERE (~10 Lines)
+    # u_o = outsideVectors[outsideWordIdx] #(H,) embedding vectors length
+    # v_c = centerWordVec
+    # u_w = outsideVectors[negSampleWordIndices] #(K,H)
+    # loss = -np.log(sigmoid(np.dot(u_o.T,centerWordVec))) - np.sum(np.log(sigmoid(-np.dot(u_w,centerWordVec))))
+    
+    # ## 可重复使用的量
+    # U = outsideVectors[indices]
+    # U[1:] = -U[1:]
+    # tempMatrix = sigmoid(np.dot(U,centerWordVec)) - 1 #(K+1,)
+    # #print(tempMatrix.shape)
+    # gradCenterVec = u_o * tempMatrix[0] - np.dot(u_w.T,tempMatrix[1:]) #(H,)
+    # # print(gradCenterVec.shape)
+    # ### Please use your implementation of sigmoid in here.
+
+    # gradOutsideVecs = np.zeros_like(outsideVectors) #(N,H)
+
+    # ## 分两部分，第一部分是u_o
+    # gradOutsideVecs[outsideWordIdx] += centerWordVec * tempMatrix[0]
+    # for i in range(K):
+    #     gradOutsideVecs[negSampleWordIndices[i]] += -(centerWordVec * tempMatrix[i+1])
+    # # # gradOutsideVecs = centerWordVec * tempMatrix[0] #(H,)
+    # ### END YOUR CODE
 
     return loss, gradCenterVec, gradOutsideVecs
 
